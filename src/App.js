@@ -1,23 +1,51 @@
-import logo from './logo.svg';
-import './App.css';
-
+import Cart from './components/Cart';
+import Header from './components/Header';
+import Main from './components/Main';
+import data from './components/data';
+import { useState } from 'react';
 function App() {
-  return (
+  const {products}=data;
+  const [cartitems,setCartitem]=useState([])
+
+  const onAdd=(product)=>{
+   const exist= cartitems.find((x)=>x.id===product.id)
+    if(exist)
+    {
+      setCartitem(cartitems.map(x=>x.id===product.id?{...exist,qty:exist.qty+1}:x))
+    }
+    else{
+      setCartitem([...cartitems,{...product,qty:1}])
+    }
+
+  }
+
+
+  const onRemove=(item)=>{
+  if(item.qty===1){
+    setCartitem(cartitems.filter((x)=>x.id!=item.id))
+  }
+  else{
+    setCartitem(cartitems.map(x=>x.id===item.id? {...x,qty:x.qty-1}:x))
+  }
+
+  }
+
+
+  const onCross=(item)=>{
+   setCartitem(cartitems.filter(x=>x.id!==item.id))
+
+  }
+
+
+ return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <Header cartitems={cartitems}/> 
+    <div className='row'>
+      
+      <Main onAdd={onAdd} products={products}/>
+      <Cart onCross={onCross} onAdd={onAdd} onRemove={onRemove} cartitems={cartitems}/>
+      
+      </div>      
     </div>
   );
 }
